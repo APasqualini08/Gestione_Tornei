@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Tornei di Padel</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B3D2E">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <div class="auth-shell">
+        <div class="auth-card" style="text-align:center">
+            <div class="auth-logo">
+                <h1><span class="ball-dot"></span>Tornei Padel</h1>
+            </div>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        (async () => {
+            const { data } = await supabaseClient.auth.getSession();
+            window.location.href = data.session ? 'tournaments.html' : 'login.html';
+        })();
+    </script>
+    <script src="js/pwa-register.js"></script>
+</body>
+</html>

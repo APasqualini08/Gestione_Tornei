@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turni e partite - Gestione Tornei di Padel</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B3D2E">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <div class="app-shell">
+        <div class="topbar">
+            <div>
+                <h1 id="tournamentName">🎾 Caricamento...</h1>
+                <div class="tagline">Turni e partite</div>
+            </div>
+            <div class="topbar-user">
+                <span id="userEmailBadge"></span>
+                <button class="btn btn-sm btn-ghost" style="color:white;border-color:rgba(247,245,239,0.3)" onclick="logout()">Esci</button>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <a href="tournaments.html">← Tutti i tornei</a>
+            <a id="navPlayers">Giocatori</a>
+            <a id="navRounds" class="active">Turni e partite</a>
+            <a id="navStandings">Classifica</a>
+            <a id="navSettings">Impostazioni torneo</a>
+        </nav>
+
+        <div class="card">
+            <h2>Genera un nuovo turno</h2>
+
+            <div id="notEnoughPlayersAlert" class="alert-box hidden">
+                Servono almeno 4 giocatori registrati per generare un turno. Vai alla pagina <strong>Giocatori</strong> per aggiungerli.
+            </div>
+
+            <div id="generateRoundForm">
+                <div class="field-row">
+                    <div class="field">
+                        <label for="roundFormula">Formula per questo turno</label>
+                        <select id="roundFormula">
+                            <option value="fissa">Coppia fissa</option>
+                            <option value="americano">Americano (rotazione)</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="numRoundsToGenerate">Numero di turni da generare</label>
+                        <input type="number" id="numRoundsToGenerate" min="1" value="1">
+                    </div>
+                </div>
+
+                <div id="fixedFormulaNote" class="info-box hidden">
+                    Formula coppia fissa: se non esistono ancora coppie per questo torneo, verranno create ora bilanciando i livelli. Da qui in avanti, fino a quando non resetti le coppie, ogni nuovo turno abbinerà le stesse coppie tra loro variando gli avversari.
+                </div>
+                <div id="americanoFormulaNote" class="info-box hidden">
+                    Formula americano: ad ogni turno cambiano sia i compagni che gli avversari, minimizzando le ripetizioni rispetto ai turni già giocati. Se il numero di giocatori non è multiplo di 4, alcuni riposeranno a rotazione.
+                </div>
+
+                <button onclick="generateRounds()" class="btn btn-accent" id="generateBtn">Genera turno/i</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>
+                Calendario partite
+                <button onclick="exportMatchScheduleToExcel()" class="btn btn-sm btn-ghost">⬇ Esporta in Excel</button>
+            </h2>
+
+            <div id="roundsLoading" class="empty-state">
+                <div class="loading-spinner"></div>
+            </div>
+
+            <div id="roundsContainer"></div>
+
+            <div id="roundsEmptyState" class="empty-state hidden">
+                <div class="empty-icon">📅</div>
+                <p>Nessun turno generato ancora.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-helpers.js"></script>
+    <script src="js/matchmaking.js"></script>
+    <script src="js/matches.js"></script>
+    <script src="js/pwa-register.js"></script>
+</body>
+</html>

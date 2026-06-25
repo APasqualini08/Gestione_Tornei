@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classifica - Gestione Tornei di Padel</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B3D2E">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <div class="app-shell">
+        <div class="topbar">
+            <div>
+                <h1 id="tournamentName">🎾 Caricamento...</h1>
+                <div class="tagline">Classifica</div>
+            </div>
+            <div class="topbar-user">
+                <span id="userEmailBadge"></span>
+                <button class="btn btn-sm btn-ghost" style="color:white;border-color:rgba(247,245,239,0.3)" onclick="logout()">Esci</button>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <a href="tournaments.html">← Tutti i tornei</a>
+            <a id="navPlayers">Giocatori</a>
+            <a id="navRounds">Turni e partite</a>
+            <a id="navStandings" class="active">Classifica</a>
+            <a id="navSettings">Impostazioni torneo</a>
+        </nav>
+
+        <div id="mixedFormulaNotice" class="alert-box hidden">
+            In questo torneo sono stati usati sia turni a coppia fissa che turni americano. Le due classifiche sotto sono calcolate separatamente in base al tipo di turno: la classifica a coppie considera solo i turni a coppia fissa, quella individuale solo i turni americano.
+        </div>
+
+        <div class="card" id="pairStandingsCard">
+            <h2>Classifica a coppie <span class="card-subtitle" style="margin:0">(turni a coppia fissa)</span></h2>
+            <div id="pairStandingsLoading" class="empty-state">
+                <div class="loading-spinner"></div>
+            </div>
+            <table class="standings-table hidden" id="pairStandingsTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Coppia</th>
+                        <th>Partite</th>
+                        <th>Vittorie</th>
+                        <th>Punti</th>
+                    </tr>
+                </thead>
+                <tbody id="pairStandingsBody"></tbody>
+            </table>
+            <div id="pairStandingsEmpty" class="empty-state hidden">
+                <p>Nessuna partita a coppia fissa giocata ancora.</p>
+            </div>
+        </div>
+
+        <div class="card" id="individualStandingsCard">
+            <h2>Classifica individuale <span class="card-subtitle" style="margin:0">(turni americano)</span></h2>
+            <div id="individualStandingsLoading" class="empty-state">
+                <div class="loading-spinner"></div>
+            </div>
+            <table class="standings-table hidden" id="individualStandingsTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Giocatore</th>
+                        <th>Partite</th>
+                        <th>Vittorie</th>
+                        <th>Punti</th>
+                    </tr>
+                </thead>
+                <tbody id="individualStandingsBody"></tbody>
+            </table>
+            <div id="individualStandingsEmpty" class="empty-state hidden">
+                <p>Nessuna partita americano giocata ancora.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-helpers.js"></script>
+    <script src="js/standings.js"></script>
+    <script src="js/pwa-register.js"></script>
+</body>
+</html>

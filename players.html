@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giocatori - Gestione Tornei di Padel</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B3D2E">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <div class="app-shell">
+        <div class="topbar">
+            <div>
+                <h1 id="tournamentName">🎾 Caricamento...</h1>
+                <div class="tagline">Gestione giocatori</div>
+            </div>
+            <div class="topbar-user">
+                <span id="userEmailBadge"></span>
+                <button class="btn btn-sm btn-ghost" style="color:white;border-color:rgba(247,245,239,0.3)" onclick="logout()">Esci</button>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <a href="tournaments.html">← Tutti i tornei</a>
+            <a id="navPlayers" class="active">Giocatori</a>
+            <a id="navRounds">Turni e partite</a>
+            <a id="navStandings">Classifica</a>
+            <a id="navSettings">Impostazioni torneo</a>
+        </nav>
+
+        <!-- Tab di selezione modalità di aggiunta -->
+        <div class="card">
+            <h2>Aggiungi giocatori</h2>
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('manual')">Manualmente</button>
+                <button class="tab-button" onclick="showTab('text')">Copia/Incolla</button>
+                <button class="tab-button" onclick="showTab('file')">Carica file CSV</button>
+            </div>
+
+            <div id="manual" class="tab-content active">
+                <div class="field-row">
+                    <div class="field">
+                        <label for="playerFirstName">Nome</label>
+                        <input type="text" id="playerFirstName" placeholder="Mario">
+                    </div>
+                    <div class="field">
+                        <label for="playerLastName">Cognome</label>
+                        <input type="text" id="playerLastName" placeholder="Rossi">
+                    </div>
+                    <div class="field">
+                        <label for="playerAge">Età</label>
+                        <input type="number" id="playerAge" placeholder="35" min="1" max="119">
+                    </div>
+                    <div class="field">
+                        <label for="playerLevel">Livello (1-5)</label>
+                        <input type="number" id="playerLevel" placeholder="3" min="1" max="5" step="0.5">
+                    </div>
+                </div>
+                <button onclick="addPlayer()" class="btn btn-accent">+ Aggiungi giocatore</button>
+            </div>
+
+            <div id="text" class="tab-content">
+                <div class="field">
+                    <label for="playerInput">Una riga per giocatore</label>
+                    <textarea id="playerInput" rows="6" placeholder="Mario, Rossi, 35, 3&#10;Anna, Bianchi, 28, 4"></textarea>
+                    <div class="helper-text">Formato: Nome, Cognome, Età, Livello (l'età può essere lasciata vuota: Nome, Cognome, , Livello)</div>
+                </div>
+                <button onclick="addPlayersFromText()" class="btn btn-accent">+ Aggiungi giocatori</button>
+            </div>
+
+            <div id="file" class="tab-content">
+                <div class="field">
+                    <label for="fileInput">File CSV (Nome, Cognome, Età, Livello)</label>
+                    <input type="file" id="fileInput" accept=".csv">
+                </div>
+                <button onclick="loadPlayersFromFile()" class="btn btn-accent">Carica giocatori dal file</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>
+                Giocatori registrati
+                <span id="playerCountBadge" class="level-badge">0</span>
+            </h2>
+            <div id="playerListLoading" class="empty-state">
+                <div class="loading-spinner"></div>
+            </div>
+            <ul id="playerList" class="player-list"></ul>
+            <div id="playerEmptyState" class="empty-state hidden">
+                <div class="empty-icon">👥</div>
+                <p>Nessun giocatore ancora. Aggiungine qualcuno per cominciare.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Esporta / Gestisci</h2>
+            <div class="btn-row">
+                <button onclick="exportPlayersToCSV()" class="btn btn-ghost">⬇ Esporta in CSV</button>
+                <button onclick="confirmResetPlayers()" class="btn btn-alert">Rimuovi tutti i giocatori</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-helpers.js"></script>
+    <script src="js/players.js"></script>
+    <script src="js/pwa-register.js"></script>
+</body>
+</html>

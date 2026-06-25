@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accedi - Gestione Tornei di Padel</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B3D2E">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <div class="auth-shell">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <h1><span class="ball-dot"></span>Tornei Padel</h1>
+            </div>
+
+            <div id="alertBox" class="alert-box hidden"></div>
+
+            <!-- Form di login -->
+            <form id="loginForm">
+                <div class="field">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required autocomplete="email">
+                </div>
+                <div class="field">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-accent btn-block" id="loginBtn">Accedi</button>
+            </form>
+
+            <!-- Form di registrazione (nascosto di default) -->
+            <form id="signupForm" class="hidden">
+                <div class="field">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required autocomplete="email">
+                </div>
+                <div class="field">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required minlength="6" autocomplete="new-password">
+                    <div class="helper-text">Almeno 6 caratteri</div>
+                </div>
+                <button type="submit" class="btn btn-accent btn-block" id="signupBtn">Crea account</button>
+            </form>
+
+            <div class="auth-switch">
+                <span id="switchToSignupWrap">Non hai un account? <a id="switchToSignup">Registrati</a></span>
+                <span id="switchToLoginWrap" class="hidden">Hai già un account? <a id="switchToLogin">Accedi</a></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const alertBox = document.getElementById('alertBox');
+
+        function showAlert(message) {
+            alertBox.textContent = message;
+            alertBox.classList.remove('hidden');
+        }
+
+        function hideAlert() {
+            alertBox.classList.add('hidden');
+        }
+
+        // Se l'utente e' gia' loggato, vai direttamente alla scelta torneo
+        (async () => {
+            const { data } = await supabaseClient.auth.getSession();
+            if (data.session) {
+                window.location.href = 'tournaments.html';
+            }
+        })();
+
+        document.getElementById('switchToSignup').addEventListener('click', () => {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            document.getElementById('switchToSignupWrap').classList.add('hidden');
+            document.getElementById('switchToLoginWrap').classList.remove('hidden');
+            hideAlert();
+        });
+
+        document.getElementById('switchToLogin').addEventListener('click', () => {
+            signupForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            document.getElementById('switchToLoginWrap').classList.add('hidden');
+            document.getElementById('switchToSignupWrap').classList.remove('hidden');
+            hideAlert();
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.textContent = 'Accesso in corso...';
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                showAlert('Accesso non riuscito: email o password non corretti.');
+                btn.disabled = false;
+                btn.textContent = 'Accedi';
+            } else {
+                window.location.href = 'tournaments.html';
+            }
+        });
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
+            const btn = document.getElementById('signupBtn');
+            btn.disabled = true;
+            btn.textContent = 'Creazione account...';
+
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+
+            if (error) {
+                showAlert('Registrazione non riuscita: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = 'Crea account';
+                return;
+            }
+
+            if (data.session) {
+                // conferma email disattivata sul progetto Supabase: si entra subito
+                window.location.href = 'tournaments.html';
+            } else {
+                showAlert('Account creato. Controlla la tua email per confermare l\'iscrizione, poi accedi.');
+                btn.disabled = false;
+                btn.textContent = 'Crea account';
+            }
+        });
+    </script>
+    <script src="js/pwa-register.js"></script>
+</body>
+</html>

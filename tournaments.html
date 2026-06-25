@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I tuoi tornei - Gestione Tornei di Padel</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B3D2E">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <div class="app-shell">
+        <div class="topbar">
+            <div>
+                <h1>🎾 Tornei Padel</h1>
+                <div class="tagline">I tuoi tornei</div>
+            </div>
+            <div class="topbar-user">
+                <span id="userEmailBadge"></span>
+                <button class="btn btn-sm btn-ghost" style="color:white;border-color:rgba(247,245,239,0.3)" onclick="logout()">Esci</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>I tuoi tornei <button class="btn btn-sm btn-accent" onclick="openNewTournamentForm()">+ Nuovo torneo</button></h2>
+
+            <div id="loadingState" class="empty-state">
+                <div class="loading-spinner"></div>
+                <p>Caricamento tornei...</p>
+            </div>
+
+            <div id="tournamentGrid" class="tournament-grid hidden"></div>
+
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-icon">🏆</div>
+                <p>Non fai ancora parte di nessun torneo.<br>Creane uno per iniziare.</p>
+            </div>
+        </div>
+
+        <!-- Form nuovo torneo -->
+        <div class="card hidden" id="newTournamentCard">
+            <h2>Crea nuovo torneo</h2>
+
+            <div class="field">
+                <label for="tName">Nome del torneo</label>
+                <input type="text" id="tName" placeholder="Es: Torneo Estivo 2026">
+            </div>
+
+            <div class="field">
+                <label for="tDescription">Descrizione (opzionale)</label>
+                <textarea id="tDescription" rows="2" placeholder="Note sul torneo..."></textarea>
+            </div>
+
+            <h3>Punteggio</h3>
+            <div class="field">
+                <label for="tScoringMode">Modalità di punteggio base</label>
+                <select id="tScoringMode" onchange="toggleScoringFields()">
+                    <option value="vittoria">Punti per vittoria/sconfitta</option>
+                    <option value="game">Somma dei game vinti</option>
+                </select>
+            </div>
+
+            <div id="winPointsFields" class="field-row">
+                <div class="field">
+                    <label for="tPointsWin">Punti vittoria</label>
+                    <input type="number" id="tPointsWin" value="3" step="0.5">
+                </div>
+                <div class="field">
+                    <label for="tPointsDraw">Punti pareggio</label>
+                    <input type="number" id="tPointsDraw" value="1" step="0.5">
+                </div>
+                <div class="field">
+                    <label for="tPointsLoss">Punti sconfitta</label>
+                    <input type="number" id="tPointsLoss" value="0" step="0.5">
+                </div>
+            </div>
+
+            <h3>Ponderazione dislivello (stile Elo)</h3>
+            <p class="card-subtitle">Vincere contro un avversario più forte vale più punti bonus; perdere da favoriti costa un malus. Regola quanto pesano questi due fattori.</p>
+
+            <div class="field">
+                <label for="tEloD">Quanto pesa il livello dei giocatori</label>
+                <div class="range-field">
+                    <input type="range" id="tEloD" min="0.3" max="3" step="0.1" value="1.0" oninput="document.getElementById('tEloDValue').textContent = this.value">
+                    <span class="range-value" id="tEloDValue">1.0</span>
+                </div>
+                <div class="helper-text">Valore basso = il dislivello conta molto (anche piccole differenze di livello generano grandi bonus/malus). Valore alto = il livello conta poco.</div>
+            </div>
+
+            <div class="field">
+                <label for="tEloK">Intensità bonus/malus sorpresa risultato</label>
+                <div class="range-field">
+                    <input type="range" id="tEloK" min="0" max="30" step="1" value="10" oninput="document.getElementById('tEloKValue').textContent = this.value">
+                    <span class="range-value" id="tEloKValue">10</span>
+                </div>
+                <div class="helper-text">0 = nessun bonus/malus (solo punteggio base). Valori alti = il dislivello pesa molto sul punteggio finale.</div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-accent" onclick="createTournament()" id="createTournamentBtn">Crea torneo</button>
+                <button class="btn btn-ghost" onclick="closeNewTournamentForm()">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-helpers.js"></script>
+    <script src="js/tournaments.js"></script>
+    <script src="js/pwa-register.js"></script>
+</body>
+</html>
